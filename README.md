@@ -34,8 +34,8 @@
 项目实现了神经网络最关键的几个底层零件，所有的梯度更新均通过严格的矩阵微积分推导得出：
 
 * **LinearLayer (全连接层)**:
-* **前向传播**: 利用行向量与广播机制计算 $Z=XW+\vec{1}\vec{b}$。
-* **反向传播**: 将梯度回传给上一层 $\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Z}W^{T}$，同时计算当前层权重与偏置的修正力：$\frac{\partial L}{\partial W}=X^{T}\frac{\partial L}{\partial Z}$，$\frac{\partial L}{\partial\vec{b}}=\vec{1}^{T}\frac{\partial L}{\partial Z}$。
+* **前向传播**: 利用行向量与广播机制计算 $Z=XW+\vec{1}\vec{b}^T$。
+* **反向传播**: 将梯度回传给上一层 $\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Z}W^{T}$，同时计算当前层权重与偏置的修正力： $\frac{\partial L}{\partial W}=X^{T} \frac{\partial L}{\partial Z}$ ，$\frac{\partial L}{\partial\vec{b}}=\vec{1}^{T}\frac{\partial L}{\partial Z}$ 
 
 
 * **ReLU (激活函数)**:
