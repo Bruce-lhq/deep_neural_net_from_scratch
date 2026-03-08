@@ -79,13 +79,30 @@ layers = [
 **拟合结果：**
 经过 10000 次迭代，网络成功收敛（最终 Loss 约为 0.0003）。从下图中可以看出，神经网络的预测曲线（绿色实线）完美平滑了噪声，并高度贴合了隐藏的真实物理规律（红色虚线）。
 
-![实验拟合曲线](images/exp_01/Fitting.png)
+![实验拟合曲线](images/exp01/Fitting.png)
 
 点击下方的 Switch 按钮可以切换到损失函数的衰减过程。
 
 通过对数坐标轴（Log Scale）可以清晰看到，Loss 在前 1000 轮经历了指数级坠落，随后进入平稳的微调期，最终稳定在 $3.0 \times 10^{-4}$ 量级，未出现震荡或发散。
 
-![损失收敛曲线](images/exp_01/Loss%20Convergence.png)
+![损失收敛曲线](images/exp01/Loss_Convergence.png)
+
+## 🎛️ 进阶：基于 Optuna 的超参数贝叶斯优化
+为了探索拟合抛物线规律的理论最优网络架构与训练环境，本项目引入了 Optuna 框架进行自动化超参数调优。我们构建了包含 200 次试验的贝叶斯优化空间，并加入了针对发散情况的自动剪枝机制。
+
+优化的超参数空间包括：
+ * 网络架构：第一层隐藏节点数 hidden_size_1 (50~200)，第二层隐藏节点数 hidden_size_2 (5~20)。
+ * 训练参数：学习率 learning_rate (对数空间 $5 \times 10^{-4} \sim 3 \times 10^{-3}$)，迭代次数 epochs (1000~10000)。
+ * 数据环境：噪声比例 true_data_noise_ratio，采样点数量 dot_number。
+
+### 参数敏感度分析：
+通过优化过程的数据积累，我们提取了各参数对最终 Loss 影响的重要性比重。如下图所示：
+![参数敏感度占比图](images/exp01/Hyperparameter_Importances.png)
+
+分析表明：
+ * hidden_size_1：第一层隐藏层的大小对模型捕捉物理规律的能力起到了决定性作用。
+ * epochs：训练的持续时间紧随其后，是确保梯度充分下降的关键。
+ * 相对而言，第二层隐藏层的大小以及数据的初始噪声比例对最终收敛精度的影响较为有限。这证明了我们的网络架构对底层数据噪声具有较强的鲁棒性。
 
 ## 🛠️ 如何运行
 
@@ -99,6 +116,10 @@ pip install -r requirements.txt
 
 3. 运行物理规律发现实验：
 ```bash
-python experiments/exp_01_parabola_fit.py
+python experiments/exp01_parabola_fit/main.py
 
 ```
+
+4. 运行 Optuna 超参数优化分析：
+```bash
+python experiments/exp01_parabola_fit/optuna_tuner.py

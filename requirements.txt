@@ -1,1 +1,1 @@
-numpy matplotlib
+numpy matplotlib optuna plotly scikit-learn
