@@ -35,17 +35,37 @@
 
 * **LinearLayer (全连接层)**:
 * **前向传播**: 利用行向量与广播机制计算 $Z=XW+\vec{1}\vec{b}^T$。
-* **反向传播**: 将梯度回传给上一层 $\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Z}W^{T}$，同时计算当前层权重与偏置的修正力： $\frac{\partial L}{\partial W}=X^{T} \frac{\partial L}{\partial Z}$ ，$\frac{\partial L}{\partial\vec{b}}=\vec{1}^{T}\frac{\partial L}{\partial Z}$ 
+* **反向传播**: 将梯度回传给上一层 $\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Z}W^{T}$，同时计算当前层权重与偏置的修正力： $$\frac{\partial L}{\partial W}=X^{T} \frac{\partial L}{\partial Z}$$ ，
+$$\frac{\partial L}{\partial \vec{b}} = \vec{1}^{T} \frac{\partial L}{\partial Z}$$ 
 
 
 * **ReLU (激活函数)**:
 * 在前向传播中利用 `self.mask` 留下“记忆节点”以保存 $x>0$ 的信息。
-* 反向传播时根据分段导数 $[\frac{\partial}{\partial X}ReLU(X)]_{ij}=\begin{cases}1&if~X_{ij}>0\\ 0&if~X_{ij}\le0\end{cases}$ 精准放行或阻断梯度。
+* 反向传播时根据分段导数
+
+$$
+[\frac{\partial }{\partial X} \text{ReLU}(X)]_{ij}=
+\begin{cases}
+1 & \text{, if } X_{ij} > 0 \\
+0 & \text{, if } X_{ij} \le 0
+\end{cases}
+$$
+
+精准放行或阻断梯度。
 
 
 * **MSELoss (均方误差损失)**:
-* 评估预测值 $\hat{y}$ 与真实观测值 $y$ 之间的能量/误差：$L=\frac{1}{N}\sum_{i=1}^{N}(\hat{y_{i}}-y_{i})^{2}$。
-* 产生反向传播的初始“拉回力”（梯度起爆）：$\frac{\partial L}{\partial\hat{Y}}=\frac{2}{N}(\hat{Y}-Y)$。
+* 评估预测值 $\hat{y}$ 与真实观测值 $y$ 之间的能量/误差：
+
+$$
+L = \frac{1}{N} \sum_{i=1}^{N} ( \hat{y_{i}} - y_{i})^{2}
+$$
+
+* 产生反向传播的初始“拉回力”（梯度起爆）：
+  
+$$
+\frac{\partial L}{\partial \hat{Y}} = \frac{2}{N} (\hat{Y}-Y)
+$$
 
 
 * **NeuralNetwork (网络主板)**:
@@ -91,8 +111,8 @@ layers = [
 为了探索拟合抛物线规律的理论最优网络架构与训练环境，本项目引入了 Optuna 框架进行自动化超参数调优。我们构建了包含 200 次试验的贝叶斯优化空间，并加入了针对发散情况的自动剪枝机制。
 
 优化的超参数空间包括：
- * 网络架构：第一层隐藏节点数 hidden_size_1 (50~200)，第二层隐藏节点数 hidden_size_2 (5~20)。
- * 训练参数：学习率 learning_rate (对数空间 $5 \times 10^{-4} \sim 3 \times 10^{-3}$)，迭代次数 epochs (1000~10000)。
+ * 网络架构：第一层隐藏节点数 hidden_size_1 (50-200)，第二层隐藏节点数 hidden_size_2 (5-20)。
+ * 训练参数：学习率 learning_rate (对数空间 $5 \times 10^{-4} \sim 3 \times 10^{-3}$ )，迭代次数 epochs (1000-10000)。
  * 数据环境：噪声比例 true_data_noise_ratio，采样点数量 dot_number。
 
 ### 参数敏感度分析：
