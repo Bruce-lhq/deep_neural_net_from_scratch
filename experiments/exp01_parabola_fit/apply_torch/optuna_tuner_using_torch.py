@@ -3,7 +3,7 @@
 from module_using_torch import parabola_fit
 import optuna
 from optuna.visualization import plot_param_importances
-import torch
+import numpy
 
 def run_optimization():
     n_trials = 30 # 实验次数
@@ -29,7 +29,7 @@ def run_optimization():
         loss = my_experiment.log_loss
 
         # 对禁区剪枝
-        if torch.isnan(loss) or torch.isinf(loss):
+        if numpy.isnan(loss) or numpy.isinf(loss):
             raise optuna.TrialPruned() 
         
         return loss

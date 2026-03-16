@@ -18,13 +18,17 @@
 
 * **`notebooks/`**: 包含早期的核心推导与测试过程（强烈建议阅读这里的笔记）。
 * **`src/`**: 核心源码目录。
-* `layers.py`: 包含线性层 (`LinearLayer`) 和激活函数 (`ReLU`) 的定义。
-* `losses.py`: 包含损失函数 (`MSELoss`) 的定义与梯度反传。
-* `network.py`: 神经网络主板 (`NeuralNetwork`)，负责将各个层集成并调度前向与反向过程。
+  * `layers.py`: 包含线性层 (`LinearLayer`) 和激活函数 (`ReLU`) 的定义。
+  * `losses.py`: 包含损失函数 (`MSELoss`) 的定义与梯度反传。
+  * `network.py`: 神经网络主板 (`NeuralNetwork`)，负责将各个层集成并调度前向与反向过程。
 
 
 * **`experiments/`**: 存放具体的实验脚本。
-* `exp_01_parabola_fit.py`: 利用构建的网络拟合二次抛物线规律的实验主程序。
+  * `exp01_parabola_fit/`: 利用构建的网络拟合二次抛物线规律的实验
+    * `main.py`: 主程序，包含画图。
+    * `module.py`: 把实验封装为了一个类
+    * `optuna_tuner.py`: 对实验进行超参数优化
+    * `apply_torch/`: 使用PyTorch重新实现上述功能
 
 
 * **`data/`**: 存放实验产生或需要的数据。
