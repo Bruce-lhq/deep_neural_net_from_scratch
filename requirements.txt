@@ -1,1 +1,1 @@
-numpy matplotlib optuna plotly scikit-learn
+numpy matplotlib optuna plotly scikit-learn torch
