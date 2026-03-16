@@ -1,30 +1,27 @@
 # 通过贝叶斯优化对 parabola_fit 的超参数进行优化
 
-from module import parabola_fit
+from module_using_torch import parabola_fit
 import optuna
 from optuna.visualization import plot_param_importances
-import numpy as np
+import torch
 
 def run_optimization():
-    n_trials = 200 # 实验次数
+    n_trials = 30 # 实验次数
     def objective(trial):
         # 需要优化的参数如下
         learning_rate = trial.suggest_float("learning_rate", 5e-4, 3e-3, log=True)
 
-        hidden_size_1 = trial.suggest_int("hidden_size_1", 50, 200)
+        hidden_size_1 = trial.suggest_int("hidden_size_1", 500, 1000)
         hidden_size_2 = trial.suggest_int("hidden_size_2", 5, 20)
-        layers = [f"LinearLayer(1, {hidden_size_1})", 
-                "ReLU()", 
-                f"LinearLayer({hidden_size_1}, {hidden_size_2})", 
-                f"LinearLayer({hidden_size_2}, 1)"]
+        net = f"nn.Linear(1, {hidden_size_1}), nn.ReLU(), nn.Linear({hidden_size_1}, {hidden_size_2}), nn.Linear({hidden_size_2}, 1)"
         
         true_data_noise_ratio = trial.suggest_float("true_data_noise_ratio", 5e-5, 1e-3, log=True)
-        dot_number = trial.suggest_int("dot_number", 100, 1000)
+        dot_number = trial.suggest_int("dot_number", 1000, 2000)
         epochs = trial.suggest_int("epochs", 1000, 10000)
         
         # 创建实验并得到结果
         my_experiment = parabola_fit(learning_rate=learning_rate, 
-                                     layers=layers, 
+                                     net=net, 
                                      true_data_noise_ratio=true_data_noise_ratio,
                                      dot_number=dot_number,
                                      epochs=epochs)
@@ -32,7 +29,7 @@ def run_optimization():
         loss = my_experiment.log_loss
 
         # 对禁区剪枝
-        if np.isnan(loss) or np.isinf(loss):
+        if torch.isnan(loss) or torch.isinf(loss):
             raise optuna.TrialPruned() 
         
         return loss
@@ -47,7 +44,7 @@ def run_optimization():
 
     # 各参数对结果的影响力
     importance = optuna.importance.get_param_importances(study)
-    print(f"参数敏感度分析: ", {k:float(f"{v:.3g}") if isinstance(v, np.floating) else v for k,v in importance.items()})
+    print(f"参数敏感度分析: ", {k:float(f"{v:.3g}") if isinstance(v, float) else v for k,v in importance.items()})
     
     # 用图直观展现各参数对结果的影响力
     fig = plot_param_importances(study)
