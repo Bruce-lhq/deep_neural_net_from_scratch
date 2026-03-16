@@ -18,7 +18,7 @@ def run_optimization():
                 f"LinearLayer({hidden_size_1}, {hidden_size_2})", 
                 f"LinearLayer({hidden_size_2}, 1)"]
         
-        true_data_noise_ratio = trial.suggest_float("true_data_noise_ratio", 5e-5, 1e-3, log=True), 
+        true_data_noise_ratio = trial.suggest_float("true_data_noise_ratio", 5e-5, 1e-3, log=True)
         dot_number = trial.suggest_int("dot_number", 100, 1000)
         epochs = trial.suggest_int("epochs", 1000, 10000)
         
